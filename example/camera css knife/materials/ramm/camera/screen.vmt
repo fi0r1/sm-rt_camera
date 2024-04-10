@@ -1,0 +1,5 @@
+"UnlitGeneric"
+{
+	$baseTexture		"_rt_Camera"
+	"$translucent"		"1"
+}

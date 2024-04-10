@@ -1,0 +1,20 @@
+VertexlitGeneric
+{
+	$basetexture 						"ramm\camera\front"
+	$bumpmap 							"ramm\camera\front_n"
+
+                 $Basemapluminancephongmask                                              1
+              "$phongexponent"                                               "50"
+	
+	$envmap								env_cubemap
+	$envmaptint							"[0.001 0.001 0.001]"
+	$envmapfresnel						1
+	
+	$phong								1
+	$phongboost							5
+	$phongfresnelranges						 "[1.2 3.2 0.7]"
+	$phongtint							"[ 1 1 1 ]"
+
+$nodecal 1
+
+}

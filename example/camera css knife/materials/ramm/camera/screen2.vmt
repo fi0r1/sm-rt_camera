@@ -1,0 +1,13 @@
+UnlitGeneric
+{
+	$basetexture 						"ramm\camera\screen2"
+
+$nodecal 1
+$translucent 1
+
+
+	"$selfillum" "1"
+	"$selfillummask" "ramm\camera\screen2_glow"
+
+
+}
