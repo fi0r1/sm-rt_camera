@@ -46,9 +46,9 @@ stock void Camera_FormatCamera(es_Camera camera)
  * @param nextframe					boolean
  * @param camera					es_Camera
  *
- * @noreturn
+ * @return camera entity			// -1 for nextframe
  */
-native void	 Camera_CreateLink(int entity, int target, bool nextframe = false, any[] camera = { 90, 1, 2048, 4096, CAMERA_DEFAULT });
+native int	Camera_CreateLink(int entity, int target, bool nextframe = false, any[] camera = { 90, 1, 2048, 4096, CAMERA_DEFAULT });
 
 /**
  * Remove _rt_Camera materials entity link with target
@@ -59,7 +59,7 @@ native void	 Camera_CreateLink(int entity, int target, bool nextframe = false, a
  *
  * @noreturn
  */
-native void	 Camera_RemoveLink(int entity, int target, bool clean = false);
+native void Camera_RemoveLink(int entity, int target, bool clean = false);
 
 /**
  * Has _rt_Camera materials entity link with target
@@ -69,4 +69,23 @@ native void	 Camera_RemoveLink(int entity, int target, bool clean = false);
  *
  * @return boolean
  */
-native bool	 Camera_HasLink(int entity, int target);
+native bool Camera_HasLink(int entity, int target);
+
+/**
+ * Get player's camera entity
+ *
+ * @param target					client index
+ *
+ * @return camera entity index
+ */
+native int	Camera_GetCamera(int target);
+
+/**
+ * Get player's camera link entity
+ *
+ * @param target					client index
+ * @param entity					entity index
+ *
+ * @return camera link entity index
+ */
+native int	Camera_GetCameraLink(int target, int entity);

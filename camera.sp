@@ -22,6 +22,8 @@ public Plugin myinfo =
 public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max)
 {
 	CreateNative("Camera_CreateLink", Native_CreateLink);
+	CreateNative("Camera_GetCamera", Native_GetCamera);
+	CreateNative("Camera_GetCameraLink", Native_GetCameraLink);
 	CreateNative("Camera_RemoveLink", Native_RemoveLink);
 	CreateNative("Camera_HasLink", Native_HasLink);
 
@@ -43,7 +45,7 @@ void SpawnCameraFrame(any data)
 	SpawnCamera(target, entity, camera);
 }
 
-void SpawnCamera(int client, int entity, es_Camera cache)
+int SpawnCamera(int client, int entity, es_Camera cache)
 {
 	char sCameraName[MAX_NAME_LENGTH], sTargetName[MAX_NAME_LENGTH];
 	FormatEx(sCameraName, sizeof(sCameraName), "sm_camera_%d", client);
@@ -94,6 +96,8 @@ void SpawnCamera(int client, int entity, es_Camera cache)
 
 		gI_CameraLink[client][entity] = camera_link;
 	}
+
+	return gI_Camera[client];
 }
 
 int Native_HasLink(Handle plugin, int numParams)
@@ -141,10 +145,18 @@ int Native_CreateLink(Handle plugin, int numParams)
 		dp.WriteCellArray(cache, sizeof(es_Camera));
 		RequestFrame(SpawnCameraFrame, dp);
 
-		return 0;
+		return -1;
 	}
 
-	SpawnCamera(target, entity, cache);
+	return SpawnCamera(target, entity, cache);
+}
 
-	return 0;
+int Native_GetCamera(Handle plugin, int numParams)
+{
+	return gI_Camera[GetNativeCell(1)];
+}
+
+int Native_GetCameraLink(Handle plugin, int numParams)
+{
+	return gI_CameraLink[GetNativeCell(1)][GetNativeCell(2)];
 }
