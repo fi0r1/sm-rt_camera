@@ -52,7 +52,7 @@ int SpawnCamera(int client, int entity, es_Camera cache)
 	FormatEx(sCameraName, sizeof(sCameraName), "sm_camera_%d", client);
 	GetEntPropString(entity, Prop_Data, "m_iName", sTargetName, sizeof(sTargetName));
 
-	if (!gI_Camera[client] || !(IsValidEdict(gI_Camera[client]) && IsValidEntity(gI_Camera[client])))
+	if (!gI_Camera[client] || !IsValidEntity(gI_Camera[client]))
 	{
 		Camera_FormatCamera(cache);
 
@@ -72,7 +72,7 @@ int SpawnCamera(int client, int entity, es_Camera cache)
 		gI_Camera[client] = camera;
 	}
 
-	if (!gI_CameraLink[client][entity] || !(IsValidEdict(gI_CameraLink[client][entity]) && IsValidEntity(gI_CameraLink[client][entity])))
+	if (!gI_CameraLink[client][entity] || !IsValidEntity(gI_CameraLink[client][entity]))
 	{
 		// Camera Link
 		int	 camera_link = CreateEntityByName("info_camera_link");
@@ -96,7 +96,7 @@ int SpawnCamera(int client, int entity, es_Camera cache)
 
 void SetCameraParent(int client)
 {
-	if (gI_Camera[client] && IsValidEdict(gI_Camera[client]) && IsValidEntity(gI_Camera[client]))
+	if (gI_Camera[client] && IsValidEntity(gI_Camera[client]))
 	{
 		AcceptEntityInput(gI_Camera[client], "ClearParent");
 
@@ -125,7 +125,7 @@ int Native_HasLink(Handle plugin, int numParams)
 	int entity = GetNativeCell(1);
 	int target = GetNativeCell(2);
 
-	return gI_CameraLink[target][entity] && IsValidEdict(gI_CameraLink[target][entity]) && IsValidEntity(gI_CameraLink[target][entity]);
+	return gI_CameraLink[target][entity] && IsValidEntity(gI_CameraLink[target][entity]);
 }
 
 int Native_RemoveLink(Handle plugin, int numParams)
@@ -134,8 +134,8 @@ int Native_RemoveLink(Handle plugin, int numParams)
 	int	 target = GetNativeCell(2);
 	bool clean	= GetNativeCell(3);
 
-	if (clean && gI_Camera[target] && IsValidEdict(gI_Camera[target]) && IsValidEntity(gI_Camera[target])) RemoveEntity(gI_Camera[target]);
-	if (gI_CameraLink[target][entity] && IsValidEdict(gI_CameraLink[target][entity]) && IsValidEntity(gI_CameraLink[target][entity])) RemoveEntity(gI_CameraLink[target][entity]);
+	if (clean && gI_Camera[target] && IsValidEntity(gI_Camera[target])) RemoveEntity(gI_Camera[target]);
+	if (gI_CameraLink[target][entity] && IsValidEntity(gI_CameraLink[target][entity])) RemoveEntity(gI_CameraLink[target][entity]);
 
 	return 0;
 }
