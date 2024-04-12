@@ -44,6 +44,7 @@ stock void Camera_FormatCamera(es_Camera camera)
  * @param entity					entity index
  * @param target					client index
  * @param nextframe					boolean
+ * @param camera					es_Camera
  *
  * @noreturn
  */
@@ -69,13 +70,3 @@ native void	 Camera_RemoveLink(int entity, int target, bool clean = false);
  * @return boolean
  */
 native bool	 Camera_HasLink(int entity, int target);
-
-#if !defined REQUIRE_PLUGIN
-
-public void __pl_camera_SetNTVOptional()
-{
-	MarkNativeAsOptional("Camera_CreateLink");
-	MarkNativeAsOptional("Camera_RemoveLink");
-	MarkNativeAsOptional("Camera_HasLink");
-}
-#endif
