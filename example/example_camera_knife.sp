@@ -14,10 +14,13 @@ public void OnClientPutInServer(int client)
 
 void OnPlayerSpawn(int client)
 {
-	if(!IsValidClient(client) || !IsPlayerAlive(client)) return;
+	if (!IsValidClient(client) || !IsPlayerAlive(client)) return;
 
-	int weapon = GetPlayerWeaponSlot(client, 2);
-	Camera_CreateLink(weapon, client, true);
+	int		  weapon = GetPlayerWeaponSlot(client, 2);
+
+	es_Camera camera;
+	camera.FOV = 30;
+	Camera_CreateLink(weapon, client, true, camera);
 }
 
 stock bool IsValidClient(int client, bool bAlive = false)

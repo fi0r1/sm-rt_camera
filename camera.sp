@@ -15,7 +15,7 @@ public Plugin myinfo =
 	name		= "Camera",
 	author		= "花花花。",
 	description = "Screen materials with hook entity",
-	version		= "Flower",
+	version		= "Flower+",
 	url			= "mufiu.com"
 };
 
@@ -34,14 +34,16 @@ void SpawnCameraFrame(any data)
 {
 	DataPack dp = view_as<DataPack>(data);
 	dp.Reset();
-	int entity = dp.ReadCell();
-	int target = dp.ReadCell();
+	int		  entity = dp.ReadCell();
+	int		  target = dp.ReadCell();
+	es_Camera camera;
+	dp.ReadCellArray(camera, sizeof(es_Camera));
 	delete dp;
 
-	SpawnCamera(target, entity);
+	SpawnCamera(target, entity, camera);
 }
 
-void SpawnCamera(int client, int entity)
+void SpawnCamera(int client, int entity, es_Camera cache)
 {
 	char sCameraName[MAX_NAME_LENGTH], sTargetName[MAX_NAME_LENGTH];
 	FormatEx(sCameraName, sizeof(sCameraName), "sm_camera_%d", client);
@@ -49,15 +51,18 @@ void SpawnCamera(int client, int entity)
 
 	if (!gI_Camera[client] || !(IsValidEdict(gI_Camera[client]) && IsValidEntity(gI_Camera[client])))
 	{
+		Camera_FormatCamera(cache);
+
 		// Camera
 		int camera = CreateEntityByName("point_camera");
 
-		DispatchKeyValue(camera, "FOV", "90");
-		DispatchKeyValue(camera, "fogMaxDensity", "1");
-		DispatchKeyValue(camera, "fogStart", "2048");
-		DispatchKeyValue(camera, "fogEnd", "4096");
 		DispatchKeyValue(camera, "targetname", sCameraName);
-		DispatchKeyValue(camera, "spawnflags", "0");
+		DispatchKeyValueInt(camera, "FOV", cache.FOV);
+		DispatchKeyValueInt(camera, "fogMaxDensity", cache.fogMaxDensity);
+		DispatchKeyValueInt(camera, "fogStart", cache.fogStart);
+		DispatchKeyValueInt(camera, "fogEnd", cache.fogEnd);
+		DispatchKeyValueInt(camera, "spawnflags", cache.spawnflags);
+
 		DispatchSpawn(camera);
 		ActivateEntity(camera);
 
@@ -79,10 +84,11 @@ void SpawnCamera(int client, int entity)
 		int	 camera_link = CreateEntityByName("info_camera_link");
 		char sCameraLinkName[MAX_NAME_LENGTH];
 		FormatEx(sCameraLinkName, sizeof(sCameraLinkName), "sm_link_%d%d", gI_Camera[client], entity);
+
 		DispatchKeyValue(camera_link, "targetname", sCameraLinkName);
 		DispatchKeyValue(camera_link, "PointCamera", sCameraName);
-
 		DispatchKeyValue(camera_link, "target", sTargetName);
+
 		DispatchSpawn(camera_link);
 		ActivateEntity(camera_link);
 
@@ -106,14 +112,18 @@ int Native_RemoveLink(Handle plugin, int numParams)
 
 	if (clean && gI_Camera[target] && IsValidEdict(gI_Camera[target]) && IsValidEntity(gI_Camera[target])) RemoveEntity(gI_Camera[target]);
 	if (gI_CameraLink[target][entity] && IsValidEdict(gI_CameraLink[target][entity]) && IsValidEntity(gI_CameraLink[target][entity])) RemoveEntity(gI_CameraLink[target][entity]);
+
 	return 0;
 }
 
 int Native_CreateLink(Handle plugin, int numParams)
 {
-	int	 entity	   = GetNativeCell(1);
-	int	 target	   = GetNativeCell(2);
-	bool nextframe = GetNativeCell(3);
+	int		  entity	= GetNativeCell(1);
+	int		  target	= GetNativeCell(2);
+	bool	  nextframe = GetNativeCell(3);
+
+	es_Camera cache;
+	GetNativeArray(4, cache, sizeof(es_Camera));
 
 	char sTargetName[MAX_NAME_LENGTH];
 	GetEntPropString(entity, Prop_Data, "m_iName", sTargetName, sizeof(sTargetName));
@@ -128,12 +138,13 @@ int Native_CreateLink(Handle plugin, int numParams)
 		DataPack dp = new DataPack();
 		dp.WriteCell(entity);
 		dp.WriteCell(target);
+		dp.WriteCellArray(cache, sizeof(es_Camera));
 		RequestFrame(SpawnCameraFrame, dp);
 
 		return 0;
 	}
 
-	SpawnCamera(target, entity);
+	SpawnCamera(target, entity, cache);
 
 	return 0;
 }

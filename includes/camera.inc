@@ -4,35 +4,78 @@
 
 #define __CAMERA
 
+#define CAMERA_DEFAULT	0
+#define CAMERA_STARTOFF (1 << 0)
+
+#define CAMERA_BITCOUNT 1
+
+enum struct es_Camera
+{
+	int FOV;
+	int fogMaxDensity;
+	int fogStart;
+	int fogEnd;
+	int spawnflags;
+}
+
+/**
+ * es_Camera default
+ *
+ * FOV - 90
+ * fogMaxDensity - 1
+ * fogStart - 2048
+ * fogEnd - 4096
+ * spawnflags - CAMERA_DEFAULT
+ *
+ */
+stock void Camera_FormatCamera(es_Camera camera)
+{
+	if (!camera.FOV) camera.FOV = 90;
+	if (!camera.fogMaxDensity) camera.fogMaxDensity = 1;
+	if (!camera.fogStart) camera.fogStart = 2048;
+	if (!camera.fogEnd) camera.fogEnd = 4096;
+	if (!camera.spawnflags) camera.spawnflags = CAMERA_DEFAULT;
+}
+
 /**
  * Create _rt_Camera materials entity link with target
  * nextframe - Whether nextframe will be triggered in the next frame. // Prevent the sequence of some events of origin
  *
- * @param entity					entity index.
- * @param target					client index.
+ * @param entity					entity index
+ * @param target					client index
  * @param nextframe					boolean
  *
  * @noreturn
  */
-native void Camera_CreateLink(int entity, int target, bool nextframe = false);
+native void	 Camera_CreateLink(int entity, int target, bool nextframe = false, any[] camera = { 90, 1, 2048, 4096, CAMERA_DEFAULT });
 
 /**
  * Remove _rt_Camera materials entity link with target
  *
- * @param entity					entity index.
- * @param target					client index.
+ * @param entity					entity index
+ * @param target					client index
  * @param clean						boolean
  *
  * @noreturn
  */
-native void Camera_RemoveLink(int entity, int target, bool clean = false);
+native void	 Camera_RemoveLink(int entity, int target, bool clean = false);
 
 /**
  * Has _rt_Camera materials entity link with target
  *
- * @param entity					entity index.
- * @param target					client index.
+ * @param entity					entity index
+ * @param target					client index
  *
  * @return boolean
  */
-native bool Camera_HasLink(int entity, int target);
+native bool	 Camera_HasLink(int entity, int target);
+
+#if !defined REQUIRE_PLUGIN
+
+public void __pl_camera_SetNTVOptional()
+{
+	MarkNativeAsOptional("Camera_CreateLink");
+	MarkNativeAsOptional("Camera_RemoveLink");
+	MarkNativeAsOptional("Camera_HasLink");
+}
+#endif
