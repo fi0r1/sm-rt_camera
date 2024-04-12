@@ -62,6 +62,15 @@ native int	Camera_CreateLink(int entity, int target, bool nextframe = false, any
 native void Camera_RemoveLink(int entity, int target, bool clean = false);
 
 /**
+ * Reset player's camera parent
+ *
+ * @param target					client index
+ *
+ * @noreturn
+ */
+native bool Camera_ResetCamera(int target);
+
+/**
  * Has _rt_Camera materials entity link with target
  *
  * @param entity					entity index

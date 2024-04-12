@@ -22,10 +22,11 @@ public Plugin myinfo =
 public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max)
 {
 	CreateNative("Camera_CreateLink", Native_CreateLink);
+	CreateNative("Camera_RemoveLink", Native_RemoveLink);
+	CreateNative("Camera_ResetCamera", Native_ResetCamera);
+	CreateNative("Camera_HasLink", Native_HasLink);
 	CreateNative("Camera_GetCamera", Native_GetCamera);
 	CreateNative("Camera_GetCameraLink", Native_GetCameraLink);
-	CreateNative("Camera_RemoveLink", Native_RemoveLink);
-	CreateNative("Camera_HasLink", Native_HasLink);
 
 	RegPluginLibrary("camera");
 
@@ -68,15 +69,6 @@ int SpawnCamera(int client, int entity, es_Camera cache)
 		DispatchSpawn(camera);
 		ActivateEntity(camera);
 
-		float fOrigin[3], fAngles[3];
-		int	  viewmodel = GetEntPropEnt(client, Prop_Send, "m_hViewModel");
-		GetClientAbsOrigin(client, fOrigin);
-		GetClientAbsAngles(client, fAngles);
-		TeleportEntity(camera, fOrigin, fAngles, NULL_VECTOR);
-
-		SetVariantString("!activator");
-		AcceptEntityInput(camera, "SetParent", viewmodel);
-
 		gI_Camera[client] = camera;
 	}
 
@@ -97,7 +89,35 @@ int SpawnCamera(int client, int entity, es_Camera cache)
 		gI_CameraLink[client][entity] = camera_link;
 	}
 
+	SetCameraParent(client);
+
 	return gI_Camera[client];
+}
+
+void SetCameraParent(int client)
+{
+	if (gI_Camera[client] && IsValidEdict(gI_Camera[client]) && IsValidEntity(gI_Camera[client]))
+	{
+		AcceptEntityInput(gI_Camera[client], "ClearParent");
+
+		float fOrigin[3], fAngles[3];
+		int	  viewmodel = GetEntPropEnt(client, Prop_Send, "m_hViewModel");
+		GetClientAbsOrigin(client, fOrigin);
+		GetClientAbsAngles(client, fAngles);
+		TeleportEntity(gI_Camera[client], fOrigin, fAngles, NULL_VECTOR);
+
+		SetVariantString("!activator");
+		AcceptEntityInput(gI_Camera[client], "SetParent", viewmodel);
+	}
+}
+
+int Native_ResetCamera(Handle plugin, int numParams)
+{
+	int target = GetNativeCell(1);
+
+	SetCameraParent(target);
+
+	return 0;
 }
 
 int Native_HasLink(Handle plugin, int numParams)
