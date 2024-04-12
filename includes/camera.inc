@@ -68,7 +68,7 @@ native void Camera_RemoveLink(int entity, int target, bool clean = false);
  *
  * @noreturn
  */
-native bool Camera_ResetCamera(int target);
+native void Camera_ResetCamera(int target);
 
 /**
  * Has _rt_Camera materials entity link with target
